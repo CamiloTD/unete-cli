@@ -1,0 +1,14 @@
+{
+  "name": "unete-cli",
+  "version": "1.0.12",
+  "main": "index.js",
+  "author": "CamiloTD <camilotd1999@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "unete-io": "^1.1.1"
+  },
+  "bin": {
+    "unete-cli": "index.js",
+    "unete-cli-es6": "es6.js"
+  }
+}
