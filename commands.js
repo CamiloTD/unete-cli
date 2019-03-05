@@ -96,7 +96,7 @@ const Commands = module.exports = {
                 completer: (line) => {
                     const hits = completions.filter((c) => c.startsWith(line));
 
-                    return [hits.length ? hits : completions, line]
+                    return [hits.length ? hits : completions, line];
                 }
             });
 
