@@ -8,8 +8,8 @@ const path = require('path');
 const Server = require('unete-io/server');
 const { encrypt, decrypt } =  require('./aes');
 
-const REGEX_ASSIGNMENT = /^(\$[^(]+)=(.+)$/;
-const REGEX_VALUE = /^(\$[^(=]+)$/;
+const REGEX_ASSIGNMENT = /^\$\.([^(]+)=(.+)$/;
+const REGEX_VALUE = /^\$\.([^(=]+)$/;
 
 const Commands = module.exports = {
 
@@ -44,17 +44,26 @@ const Commands = module.exports = {
     
             const r = repl.start({
                 prompt: 'unete-cli> '.cyan.bold,
-                eval: async (cmd, ctx, filename, cb) => {
+                eval: async (cmd, $, filename, cb) => {
                     cmd = cmd.trim();
                     if(cmd === "exit") process.exit(0);
                     
                     try {
+
+                        if(cmd === "help") {
+                            const methods = await API.$public();
+
+                            console.log(`Available methods for ${url}:`.bold.cyan, helpify(methods, "", "", "  "));
+
+                            return cb(null);        
+                        }
+
                         let match = REGEX_ASSIGNMENT.exec(cmd);
                         
                         if(match) {
                             const val = await eval(`(async () => { return ${match[2]} })()`);
                             
-                            ctx[match[1].trim()] = val;
+                            $[match[1].trim()] = val;
 
                             store.set(match[1].trim(), val);
                             
@@ -65,7 +74,7 @@ const Commands = module.exports = {
                         match = REGEX_VALUE.exec(cmd);
 
                         if(match) {
-                            cb(null, ctx[cmd]);
+                            cb(null, $[cmd]);
                             return;
                         }
 
@@ -165,4 +174,21 @@ const Commands = module.exports = {
             Commands.attach(url, pass);
         });
     }
+}
+
+function helpify (obj, header = "", pre = "", tabs="") {
+    let str = (header && `+ ${pre + header}:`.bold.cyan) || "";
+
+    for(let i in obj) {
+        let fn = obj[i];
+
+        if(typeof fn === "object" && !Array.isArray(fn)) str += "\n" + tabs + helpify(fn, i, i + ".", tabs + "  ");
+        else {
+            let args = Array.isArray(fn)? fn.map((x) => x.bold.magenta).join(', '.bold.cyan) : "...".bold.magenta;
+
+            str += `\n${tabs}${'+'.bold.cyan} ${pre.bold.cyan}${i.bold.cyan}${`(${args})`.bold.cyan}`;
+        }
+    }
+
+    return str;
 }
