@@ -41,7 +41,9 @@ const Commands = module.exports = {
         (async () => {
             let API = Sock(url);
             let store = Storage(Buffer.from(url).toString('base64'));
-    
+            const methods = await API.$public();
+            const completions = plainify(methods);
+
             const r = repl.start({
                 prompt: 'unete-cli> '.cyan.bold,
                 eval: async (cmd, $, filename, cb) => {
@@ -51,8 +53,6 @@ const Commands = module.exports = {
                     try {
 
                         if(cmd === "help") {
-                            const methods = await API.$public();
-
                             console.log(`Available methods for ${url}:`.bold.cyan, helpify(methods, "", "", "  "));
 
                             return cb(null);        
@@ -92,11 +92,15 @@ const Commands = module.exports = {
 
                         cb();
                     }
+                },
+                completer: (line) => {
+                    const hits = completions.filter((c) => c.startsWith(line));
+
+                    return [hits.length ? hits : completions, line]
                 }
             });
 
             for(let i in store.data) r.context[i] = store.data[i];
-            
         })();
     },
 
@@ -191,4 +195,17 @@ function helpify (obj, header = "", pre = "", tabs="") {
     }
 
     return str;
+}
+
+function plainify (obj, pre="") {
+    let x = [];
+
+    for(let i in obj) {
+        let y = obj[i];
+
+        if(typeof y === "object" && !Array.isArray(y)) x = [...x, ...plainify(y, i + ".")];
+        else x.push(pre + i);
+    }
+
+    return x;
 }
