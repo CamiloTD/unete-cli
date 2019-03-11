@@ -60,6 +60,8 @@ if(log) {
                 sock.end();
             }
         });
+
+        sock.on('error', () => sock.end());
     }).listen(log);
 }
 

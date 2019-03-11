@@ -9,7 +9,7 @@ const Server = require('unete-io/server');
 const { encrypt, decrypt } =  require('./aes');
 
 const REGEX_ASSIGNMENT = /^\$\.([^(]+)=(.+)$/;
-const REGEX_VALUE = /^\$\.([^(=]+)$/;
+const REGEX_VALUE = /^(\$\.[^(=]+)$/;
 
 const Commands = module.exports = {
 
@@ -47,6 +47,7 @@ const Commands = module.exports = {
             const r = repl.start({
                 prompt: 'unete-cli> '.cyan.bold,
                 eval: async (cmd, $, filename, cb) => {
+                    
                     cmd = cmd.trim();
                     if(cmd === "exit") process.exit(0);
                     
@@ -74,7 +75,7 @@ const Commands = module.exports = {
                         match = REGEX_VALUE.exec(cmd);
 
                         if(match) {
-                            cb(null, $[cmd]);
+                            cb(null, eval(cmd));
                             return;
                         }
 
@@ -181,7 +182,7 @@ const Commands = module.exports = {
 }
 
 function helpify (obj, header = "", pre = "", tabs="") {
-    let str = (header && `+ ${pre + header}:`.bold.cyan) || "";
+    let str = (header && `+ ${pre + "*"}:`.bold.cyan) || "";
 
     for(let i in obj) {
         let fn = obj[i];
