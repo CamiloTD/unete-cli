@@ -6,6 +6,9 @@ const net = require('net');
 const readline = require('readline-sync');
 const path = require('path');
 const Server = require('unete-io/server');
+const YAML = require('yamljs');
+const Microservice = require('./microservice');
+
 const { encrypt, decrypt } =  require('./aes');
 
 const REGEX_ASSIGNMENT = /^\$\.([^(]+)=(.+)$/;
@@ -178,6 +181,19 @@ const Commands = module.exports = {
 
             Commands.attach(url, pass);
         });
+    },
+
+    async admin (file) {
+        const ms_config = YAML.load(file);
+        const Services = {};
+
+        for(const name in ms_config) {
+            const config = ms_config[name];
+            const ms = Services[name] = new Microservice(config, name);
+
+            ms.exec();
+            ms.bind();
+        }
     }
 }
 

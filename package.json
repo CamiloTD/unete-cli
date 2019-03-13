@@ -5,7 +5,8 @@
   "author": "CamiloTD <camilotd1999@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "unete-io": "^1.1.6"
+    "unete-io": "^1.1.6",
+    "yamljs": "^0.3.0"
   },
   "bin": {
     "unete-cli": "index.js"
