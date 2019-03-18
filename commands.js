@@ -8,6 +8,8 @@ const path = require('path');
 const Server = require('unete-io/server');
 const YAML = require('yamljs');
 const Microservice = require('./microservice');
+const https = require('https');
+const fs = require('fs');
 
 const { encrypt, decrypt } =  require('./aes');
 
@@ -43,14 +45,13 @@ const Commands = module.exports = {
     
         (async () => {
             let API = Sock(url);
-            let store = Storage(Buffer.from(url).toString('base64'));
+            let store = Storage('env-vars');
             const methods = await API.$public();
             const completions = plainify(methods);
 
             const r = repl.start({
                 prompt: 'unete-cli> '.cyan.bold,
                 eval: async (cmd, $, filename, cb) => {
-                    
                     cmd = cmd.trim();
                     if(cmd === "exit") process.exit(0);
                     
@@ -141,11 +142,28 @@ const Commands = module.exports = {
     },
 
     start (_module, port, program) {
-        if(!port) throw "PORT_EXPECTED";
+        if(!program) {
+            program = port;
+            port = undefined;
+        }
+
+        const config = program.config? YAML.load(program.config) : {};
+        if(!port && !config.port) throw "PORT_EXPECTED";
+        if(!port) port = config.port;
 
         _module = require(path.join(process.cwd(), _module || 'index.js'));
-    
-        let server = new Server(_module);
+
+        var https_server; // HTTPS Server
+        if(config.https) {
+           https_server = https.createServer({
+                key : fs.readFileSync(path.resolve(process.cwd(), config.https.key)),
+                cert: fs.readFileSync(path.resolve(process.cwd(), config.https.cert)),
+                ca  : fs.readFileSync(path.resolve(process.cwd(), config.https.ca))
+            });
+
+        }
+
+        let server = new Server(_module, https_server);
 
         if(program.log) {
             server.on('connection', (sock) => {
@@ -169,7 +187,11 @@ const Commands = module.exports = {
         }
     
         (async () => {
-            await server.listen(port);
+            if(config.https)
+                await https_server.listen(port);
+            else
+                await server.listen(port);
+
             console.log(("Microservice running at port :" + port).bold.cyan);
         })();
     },

@@ -1,11 +1,11 @@
 {
   "name": "unete-cli",
-  "version": "1.1.8",
+  "version": "1.2.1",
   "main": "index.js",
   "author": "CamiloTD <camilotd1999@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "unete-io": "^1.1.6",
+    "unete-io": "^1.1.9",
     "yamljs": "^0.3.0"
   },
   "bin": {

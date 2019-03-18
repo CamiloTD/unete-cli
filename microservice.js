@@ -10,7 +10,7 @@ class Microservice {
     }
 
     exec () {
-        const folder = path.join(cwd, this.config.folder);
+        const folder = path.resolve(cwd, this.config.folder);
         const command = this.config.command;
 
         console.log(`Executing ${command.cyan.bold} on ${folder.cyan.bold}`);
@@ -22,6 +22,7 @@ class Microservice {
         this.child_process.stderr.pipe(process.stderr);
         this.child_process.stdout.pipe(process.stdout);
     }
+
 }
 
 module.exports = Microservice;

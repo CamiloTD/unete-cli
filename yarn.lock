@@ -412,10 +412,10 @@ ultron@~1.1.0:
   resolved "https://registry.yarnpkg.com/ultron/-/ultron-1.1.1.tgz#9fe1536a10a664a65266a1e3ccf85fd36302bc9c"
   integrity sha512-UIEXBNeYmKptWH6z8ZnqTeS8fV74zG0/eRU9VGkpzz+LIJNs8W/zM/L+7ctCkRrgbNnnR0xxw4bKOr0cW0N0Og==
 
-unete-io@^1.1.6:
-  version "1.1.7"
-  resolved "https://registry.yarnpkg.com/unete-io/-/unete-io-1.1.7.tgz#0a1d3e2781aa7c201abda27b7ac4bfb2c6fe9bbe"
-  integrity sha512-NDy4vb9lr6/zqn+w9LSuUv0wLh8awkzqb1EeqbzYegLv+alFTxOz0Il2RgJ3C3xjHwWOHuYbsvBgR+6nniTETA==
+unete-io@^1.1.9:
+  version "1.1.9"
+  resolved "https://registry.yarnpkg.com/unete-io/-/unete-io-1.1.9.tgz#75f8167afc6e3f3e6be99c418a14a89bd7e98d5a"
+  integrity sha512-BCdP2x0NagRJjxi3dlK/uvRnm0Fh7/1N3akTuqTbK5qRmCuwgtpC6K3YTqiMfGad/Pv0wTjxHJVC3u2nJ+xVlw==
   dependencies:
     colors "^1.3.3"
     commander "^2.19.0"

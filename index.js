@@ -17,6 +17,7 @@ cli.version('1.0.0')
    .option('-p, --port <port>', 'Set port')
    .option('-m, --module <filename>', 'Set module to export')
    .option('-l, --log <port>', 'Opens a tcp log server.')
+   .option('-c, --config <file>', 'Uses a configuration file.')
    .action((cmd, ...args) => Commands[cmd] && Commands[cmd](...args))
 
 cli.parse(process.argv)
